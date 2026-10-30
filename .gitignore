@@ -1,0 +1,8 @@
+/build/
+/errors
+/*.o
+/*.ppu
+/compile
+/interpret
+__pycache__/
+*.pyc

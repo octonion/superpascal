@@ -510,10 +510,11 @@ function within(proc: pointer)
 var levelno: integer;
   more: boolean;
 begin
+  within := false;
   more := true;
   levelno := blocklevel;
   while more do
-    if block[blocklevel].heading
+    if block[levelno].heading
         = proc then
       begin
         more := false;

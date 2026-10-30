@@ -5,6 +5,10 @@
 program interpret(input, output);
 {$include "common.p"}
 
+{ Linux CLOCK_MONOTONIC = 1. Free Pascal ISO mode cannot import SysUtils. }
+function clock_gettime(clockid: integer; var stamp: monotonicstamp): integer;
+  cdecl; external 'c' name 'clock_gettime';
+
 procedure run( 
   var codefile : binary;
   var inpfile, outfile: text);
@@ -127,6 +131,13 @@ begin
 end;
 
 begin
+  { Initialize VM state explicitly; program2 sets up the first frame. }
+  FillChar(st, SizeOf(st), 0);
+  FillChar(free, SizeOf(free), 0);
+  FillChar(open, SizeOf(open), 0);
+  stackbottom := minaddr;
+  b := 0; s := 0; t := 0;
+  cmax := 0; ready := 0;
   //writeln('enter run');
   //writeln(outfile,'enter run');
   load(codefile);
@@ -1827,33 +1838,19 @@ begin
     //writeln('exit run');
 end { run };
 
-{ Time code for readtime in Freepascal on unix systems }
-//function fptime(var tloc : integer): integer; external name 'FPC_SYSC_TIME'; 
-
-procedure readtime(
- var t:  int64);
-
+{ Measure elapsed monotonic wall-clock time in nanoseconds. }
+procedure readtime(var t: int64);
+var stamp: monotonicstamp;
 begin
-  { A nonstandard function reads
-    the processor time in ms }
-  // writeln('enter readtime');
-  t := fptime(t);
-  // writeln('time = ',t);
-  // writeln('exit readtime');
+  if clock_gettime(1, stamp) <> 0 then
+    halt(1);
+  t := stamp.seconds * 1000000000 + stamp.nanoseconds
 end;
 
-procedure writetime(
-  var outfile: text;
-  t1, t2: int64);
+procedure writetime(var outfile: text; t1, t2: int64);
 begin
-  { Outputs the time interval
-    t2 - t1 ms in seconds }
-  //writeln('writetime');
   writeln(outfile);
-  writeln(outfile,(t2 - t1):1,' s');
-{  writeln(outfile,
-    ((t2 - t1 + 500) div 1000):1,
-    ' s')}
+  writeln(outfile, (t2 - t1) / 1000000000.0:0:3, ' s');
 end;
 
 procedure runtime(

@@ -221,7 +221,7 @@ procedure testoutput(
   kind: phrase);
 const
   max = 5 { symbols/line };
-var i, n: integer;
+var i: integer;
   log: text;
 begin
   if testing then
@@ -234,7 +234,6 @@ begin
       write(log, sp);
       writephrase(log, kind);
       writeln(log);
-      n := outbuf.length;
       for i := 1 to
         outbuf.length do
           begin
@@ -261,7 +260,8 @@ begin
   rewrite(code);
   for i := 1 to outbuf.length do
     write(code,
-      outbuf.contents[i])
+      outbuf.contents[i]);
+  close(code) { commit buffered bytecode before returning }
 end;
 
 procedure rerun;
@@ -333,6 +333,9 @@ begin
 end;
 
 begin
+  { firstpass initializes these, but make the initial state explicit. }
+  compiled := false;
+  optimizing := true;
   firstpass;
   scan(lineno, accept, put,
     putreal, putstring,
@@ -363,7 +366,11 @@ begin
             end
         end
     end;
-  1: exit
+  1: begin
+       exit;
+       close(errors);
+       close(source)
+     end
 end { compile };
 
 begin compile end.

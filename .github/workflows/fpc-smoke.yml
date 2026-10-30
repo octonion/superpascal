@@ -1,0 +1,31 @@
+name: Free Pascal compatibility tests
+
+on:
+  push:
+    branches: [test/fpc-2026-smoke]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: "Free Pascal / Ubuntu ${{ matrix.ubuntu }}"
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        ubuntu: ["24.04", "26.04"]
+    container:
+      image: ubuntu:${{ matrix.ubuntu }}
+    steps:
+      - name: Install compiler and test tools
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends fp-compiler git ca-certificates make python3 build-essential
+      - uses: actions/checkout@v4
+      - name: Build with warnings enabled
+        run: make all
+      - name: Compile examples and run regression tests
+        run: make test
