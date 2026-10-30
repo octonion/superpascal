@@ -159,6 +159,7 @@ procedure declare(
 var i, length: integer;
   text: string;
 begin
+  text := nulstring;
   length := maxshort;
   while shorttext[length] = sp
     do length := length - 1;
@@ -828,6 +829,7 @@ end;
     TokenField [ TokenField ]* . }
 
 begin
+  ch := chr(etx); { nextchar replaces this with the first input character }
   initialize; nextchar;
   emit2(newline1, lineno);
   while ch <> chr(etx) do
