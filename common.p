@@ -272,6 +272,10 @@ type
         false: (a: real);
         true: (b, c: integer)
     end;
+  { Linux clock_gettime ABI (64-bit time_t and long). }
+  monotonicstamp = record
+    seconds, nanoseconds: int64
+  end;
 
 { phrase routines }
 
