@@ -2,7 +2,7 @@ name: Free Pascal compatibility tests
 
 on:
   push:
-    branches: [test/fpc-2026-smoke]
+    branches: [master]
   pull_request:
 
 permissions:
