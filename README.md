@@ -15,14 +15,14 @@ language, not modern Free Pascal syntax.
 ## Requirements
 
 - Free Pascal Compiler **3.2.2** (tested on Ubuntu 24.04 and 26.04, x86-64).
-- GNU Make for the provided build commands.
+- GNU Make and the Linux C development toolchain for the provided build commands.
 - Python 3 (standard library only) to run tests.
 
 On Ubuntu/Kubuntu:
 
 ```sh
 sudo apt update
-sudo apt install fp-compiler make python3
+sudo apt install fp-compiler make python3 build-essential
 ```
 
 The `fpc` package also works; `fp-compiler` suffices for this repository.
