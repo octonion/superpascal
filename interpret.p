@@ -2,13 +2,12 @@
              20 August 1993
   Copyright (c) 1993 Per Brinch Hansen }
 
-{ Import SysUtils in Object Pascal mode, then compile the historical body
-  in ISO mode (where 'string' is a user-defined type). }
-{$mode objfpc}
 program interpret(input, output);
-uses SysUtils;
-{$mode iso}
 {$include "common.p"}
+
+{ Linux CLOCK_MONOTONIC = 1. Free Pascal ISO mode cannot import SysUtils. }
+function clock_gettime(clockid: integer; var stamp: monotonicstamp): integer;
+  cdecl; external 'c' name 'clock_gettime';
 
 procedure run( 
   var codefile : binary;
@@ -1839,23 +1838,26 @@ begin
     //writeln('exit run');
 end { run };
 
-{ Measure elapsed wall-clock time in milliseconds. }
-procedure readtime(var t: QWord);
+{ Measure elapsed monotonic wall-clock time in nanoseconds. }
+procedure readtime(var t: int64);
+var stamp: monotonicstamp;
 begin
-  t := GetTickCount64;
+  if clock_gettime(1, stamp) <> 0 then
+    halt(1);
+  t := stamp.seconds * 1000000000 + stamp.nanoseconds
 end;
 
-procedure writetime(var outfile: text; t1, t2: QWord);
+procedure writetime(var outfile: text; t1, t2: int64);
 begin
   writeln(outfile);
-  writeln(outfile, (t2 - t1) / 1000.0:0:3, ' s');
+  writeln(outfile, (t2 - t1) / 1000000000.0:0:3, ' s');
 end;
 
 procedure runtime(
   var codefile : binary;
   var inpfile: text;
   var outfile: text);
-var t1, t2 : QWord;
+var t1, t2 : int64;
 begin
   //writeln('enter runtime');
   readtime(t1);
