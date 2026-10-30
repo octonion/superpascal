@@ -260,7 +260,8 @@ begin
   rewrite(code);
   for i := 1 to outbuf.length do
     write(code,
-      outbuf.contents[i])
+      outbuf.contents[i]);
+  close(code) { commit buffered bytecode before returning }
 end;
 
 procedure rerun;
@@ -365,7 +366,11 @@ begin
             end
         end
     end;
-  1: exit
+  1: begin
+       exit;
+       close(errors);
+       close(source)
+     end
 end { compile };
 
 begin compile end.
