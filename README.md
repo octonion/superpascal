@@ -88,6 +88,8 @@ Tests compile all **11** supplied example programs and run assertions for:
   checked against the previously recorded output.
 - Interpreter timing: an elapsed-seconds line with millisecond precision,
   consistent with the enclosing test's monotonic timer.
+- Nested scope analysis: a valid nested procedure call is accepted, while
+  forbidden recursive calls with implicit dependencies are rejected.
 
 `make test-full` additionally **runs** all other supplied examples, including
 the expensive 50,000-step `nbody` example. The default test target deliberately
