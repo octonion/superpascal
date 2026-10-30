@@ -2,9 +2,12 @@
              20 August 1993
   Copyright (c) 1993 Per Brinch Hansen }
 
-{$mode objfpc} { allow the SysUtils timing unit }
+{ Import SysUtils in Object Pascal mode, then compile the historical body
+  in ISO mode (where 'string' is a user-defined type). }
+{$mode objfpc}
 program interpret(input, output);
 uses SysUtils;
+{$mode iso}
 {$include "common.p"}
 
 procedure run( 
