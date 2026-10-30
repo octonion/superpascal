@@ -23,7 +23,7 @@ jobs:
       - name: Install compiler and test tools
         run: |
           apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends fp-compiler git ca-certificates make python3
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends fp-compiler git ca-certificates make python3 build-essential
       - uses: actions/checkout@v4
       - name: Build with warnings enabled
         run: make all
