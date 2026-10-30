@@ -57,7 +57,10 @@ def compile_source(source: Path) -> Path:
     errors = (ROOT / "errors").read_text()
     if "no errors found" not in errors or not output.is_file() or output.stat().st_size == 0:
         raise AssertionError(
-            f"Could not compile {source}:\n{stdout}\n{errors}"
+            f"Could not compile {source}:\n"
+            f"STDOUT={stdout!r}\nERRORS={errors!r}\n"
+            f"OUTPUT EXISTS={output.is_file()}\n"
+            f"OUTPUT SIZE={output.stat().st_size if output.is_file() else 'missing'}"
         )
     print(f"  COMPILE OK: {relative}")
     return output
