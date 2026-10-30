@@ -1,4 +1,4 @@
-name: Free Pascal compatibility smoke test
+name: Free Pascal compatibility tests
 
 on:
   push:
@@ -10,48 +10,22 @@ permissions:
 
 jobs:
   build-and-test:
-    name: "Free Pascal on Ubuntu ${{ matrix.ubuntu }}"
+    name: "Free Pascal / Ubuntu ${{ matrix.ubuntu }}"
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         ubuntu: ["24.04", "26.04"]
     container:
       image: ubuntu:${{ matrix.ubuntu }}
-
     steps:
-      - name: Install Free Pascal and Git
+      - name: Install compiler and test tools
         run: |
           apt-get update
-          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends fp-compiler git ca-certificates
-
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends fp-compiler git ca-certificates make python3
       - uses: actions/checkout@v4
-
-      - name: Build Super Pascal compiler and interpreter
-        run: |
-          fpc -iV
-          fpc -O3 -Miso compile.p
-          fpc -O3 -Miso -Fabaseunix interpret.p
-
-      - name: Compile all supplied Super Pascal examples
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p build-tests
-          for source in examples/*.sp; do
-            name="$(basename "${source%.sp}")"
-            printf '%s\n%s\n' "$source" "build-tests/$name" | ./compile >"build-tests/$name.compile.log"
-            test -s "build-tests/$name" || { cat "build-tests/$name.compile.log"; exit 1; }
-            echo "Compiled $source"
-          done
-
-      - name: Run primality example in interpreter
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf 'build-tests/primality\nno\n' | ./interpret > build-tests/primality.run.log
-          cat build-tests/primality.run.log
-          grep -F '1653701519(10)' build-tests/primality.run.log
-          grep -F '0 composite votes, 2 prime votes' build-tests/primality.run.log
-          grep -F '1653701518(10)' build-tests/primality.run.log
-          grep -F '2 composite votes, 0 prime votes' build-tests/primality.run.log
+      - name: Build with warnings enabled
+        run: make all
+      - name: Compile examples and run regression tests
+        run: make test
