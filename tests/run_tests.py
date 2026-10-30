@@ -42,7 +42,7 @@ def execute(args: list[str], input_text: str, timeout: int) -> tuple[str, float]
 
 def compile_source(source: Path) -> Path:
     relative = source.relative_to(ROOT).as_posix()
-    output = BUILD / "programs" / source.stem
+    output = BUILD / "prog" / source.stem
     output.parent.mkdir(parents=True, exist_ok=True)
     output.unlink(missing_ok=True)
 
