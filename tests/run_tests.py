@@ -97,7 +97,7 @@ def check_primality(program: Path) -> None:
 
 def check_pipeline(program: Path) -> None:
     output, _ = interpret(program)
-    assert "The resulting value is 100" in output, output
+    assert re.search(r"The resulting value is\s+100\b", output), output
 
 
 def check_recursion(program: Path) -> None:
