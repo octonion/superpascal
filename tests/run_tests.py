@@ -110,6 +110,25 @@ def check_recursion(program: Path) -> None:
     assert elapsed > 0, f"Timer returned zero for recursion benchmark:\n{output}"
 
 
+
+def check_nested_scopes() -> None:
+    nested = compile_source(ROOT / "tests" / "nested_recursion.sp")
+    output, _ = interpret(nested)
+    assert "Nested recursion succeeded" in output, output
+
+    invalid = ROOT / "tests" / "recursive_implicit.sp"
+    target = BUILD / "reject"
+    target.unlink(missing_ok=True)
+    stdout, _ = execute(
+        [str(COMPILER)], f"tests/recursive_implicit.sp\nbuild/reject\n", timeout=30
+    )
+    errors = (ROOT / "errors").read_text()
+    if "recursion error" not in errors.lower() or target.exists():
+        raise AssertionError(
+            f"Expected semantic recursion error for {invalid}:\n{stdout}\n{errors}"
+        )
+    print("  REJECTION OK: recursive implicit global state")
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -133,6 +152,7 @@ def main() -> None:
     check_primality(binaries["primality"])
     check_pipeline(binaries["pipeline"])
     check_recursion(compile_source(ROOT / "tests" / "outcomes.sp"))
+    check_nested_scopes()
 
     if args.full:
         for name in sorted(set(binaries) - {"primality", "pipeline"}):
