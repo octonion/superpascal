@@ -1,5 +1,7 @@
 # Super Pascal compiler and interpreter
 
+[![Free Pascal compatibility tests](https://github.com/octonion/superpascal/actions/workflows/fpc-smoke.yml/badge.svg?branch=master)](https://github.com/octonion/superpascal/actions/workflows/fpc-smoke.yml)
+
 A maintained Free Pascal build of **Per Brinch Hansen's 1993 Super Pascal**
 compiler and bytecode interpreter. Super Pascal is an educational Pascal
 extension for parallel programming with processes, channels, and communication.
@@ -133,7 +135,18 @@ proof, nor a security audit of bytecode loaded from untrusted sources.
 
 ## Provenance and license
 
-Original Super Pascal compiler/interpreter by **Per Brinch Hansen**, 1993.
-The Free Pascal compatibility changes and repository organization are maintained
-here. See [LICENSE](LICENSE) for the repository's MIT licensing terms and
-retain the original attribution in the source.
+**Per Brinch Hansen** wrote the original Super Pascal compiler, bytecode
+interpreter, and accompanying manuals in 1993. The repository retains the
+original distribution as [`software.shar`](software.shar) (a shell archive
+packaged in 1998), alongside the extracted historical source and documentation.
+
+**Christopher D. Long** adapted the source to compile with Free Pascal in 2018.
+The later maintenance work adds reproducible builds, automated regression tests,
+modern timing, and 64-bit Linux compatibility checks. The language design and
+original compiler/interpreter are credited to Per Brinch Hansen, not to the
+maintainers of this port.
+
+The repository includes an [MIT LICENSE](LICENSE) bearing Christopher D.
+Long's 2018 copyright notice. The preserved 1993 source files and manuals also
+carry their own Per Brinch Hansen copyright notices; the repository license
+should not be interpreted as replacing those historical notices.
