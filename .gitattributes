@@ -1,0 +1,6 @@
+# Source files in the historical Pascal compiler/interpreter and examples.
+*.p linguist-language=Pascal
+*.sp linguist-language=Pascal
+
+# A preserved GNU shell archive of the 1993 distribution, not the project language.
+software.shar linguist-vendored
