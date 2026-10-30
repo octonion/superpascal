@@ -34,7 +34,7 @@ make
 ```
 
 This generates `build/compile` and `build/interpret` and keeps generated
-objects outside the source tree. A direct build is also supported:
+objects outside the source tree. A direct build is also supported (64-bit Linux):
 
 ```sh
 fpc -O3 -Miso compile.p
@@ -66,8 +66,8 @@ Expected output includes:
 ```
 
 The last line reports elapsed *wall-clock* time in seconds to three decimal
-places. It uses Free Pascal's 64-bit increasing millisecond tick count
-(`SysUtils.GetTickCount64`), instead of the old Unix epoch-seconds routine.
+places. On 64-bit Linux, the interpreter uses `clock_gettime(CLOCK_MONOTONIC)`
+with nanosecond timestamps, instead of the old Unix epoch-seconds routine.
 
 **Note:** the historical implementation limits filenames entered in its prompts
 to 30 characters. Use short relative paths from the repository root.
