@@ -114,23 +114,30 @@ def check_recursion(program: Path) -> None:
 
 
 
-def check_nested_scopes() -> None:
-    nested = compile_source(ROOT / "tests" / "nested_recursion.sp")
-    output, _ = interpret(nested)
-    assert "Nested recursion succeeded" in output, output
-
-    invalid = ROOT / "tests" / "recursive_implicit.sp"
+def assert_recursion_rejected(name: str) -> None:
     target = BUILD / "reject"
     target.unlink(missing_ok=True)
     stdout, _ = execute(
-        [str(COMPILER)], f"tests/recursive_implicit.sp\nbuild/reject\n", timeout=30
+        [str(COMPILER)], f"tests/{name}.sp\nbuild/reject\n", timeout=30
     )
     errors = (ROOT / "errors").read_text()
     if "recursion error" not in errors.lower() or target.exists():
         raise AssertionError(
-            f"Expected semantic recursion error for {invalid}:\n{stdout}\n{errors}"
+            f"Expected semantic recursion error for {name}:\n{stdout}\n{errors}"
         )
-    print("  REJECTION OK: recursive implicit global state")
+    print(f"  REJECTION OK: tests/{name}.sp")
+
+
+def check_nested_scopes() -> None:
+    valid = compile_source(ROOT / "tests" / "nested_calls.sp")
+    output, _ = interpret(valid)
+    assert "Nested call 4" in output, output
+
+    # Calling an enclosing procedure recursively through a nested procedure
+    # must detect implicit state and raise a recursion error.
+    assert_recursion_rejected("nested_recursion")
+    assert_recursion_rejected("recursive_implicit")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser()
