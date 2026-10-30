@@ -2,6 +2,7 @@
              20 August 1993
   Copyright (c) 1993 Per Brinch Hansen }
 
+{$mode objfpc} { allow the SysUtils timing unit }
 program interpret(input, output);
 uses SysUtils;
 {$include "common.p"}
