@@ -3,6 +3,7 @@
   Copyright (c) 1993 Per Brinch Hansen }
 
 program interpret(input, output);
+uses SysUtils;
 {$include "common.p"}
 
 procedure run( 
@@ -127,6 +128,13 @@ begin
 end;
 
 begin
+  { Initialize VM state explicitly; program2 sets up the first frame. }
+  FillChar(st, SizeOf(st), 0);
+  FillChar(free, SizeOf(free), 0);
+  FillChar(open, SizeOf(open), 0);
+  stackbottom := minaddr;
+  b := 0; s := 0; t := 0;
+  cmax := 0; ready := 0;
   //writeln('enter run');
   //writeln(outfile,'enter run');
   load(codefile);
@@ -1827,40 +1835,23 @@ begin
     //writeln('exit run');
 end { run };
 
-{ Time code for readtime in Freepascal on unix systems }
-//function fptime(var tloc : integer): integer; external name 'FPC_SYSC_TIME'; 
-
-procedure readtime(
- var t:  int64);
-
+{ Measure elapsed wall-clock time in milliseconds. }
+procedure readtime(var t: QWord);
 begin
-  { A nonstandard function reads
-    the processor time in ms }
-  // writeln('enter readtime');
-  t := fptime(t);
-  // writeln('time = ',t);
-  // writeln('exit readtime');
+  t := GetTickCount64;
 end;
 
-procedure writetime(
-  var outfile: text;
-  t1, t2: int64);
+procedure writetime(var outfile: text; t1, t2: QWord);
 begin
-  { Outputs the time interval
-    t2 - t1 ms in seconds }
-  //writeln('writetime');
   writeln(outfile);
-  writeln(outfile,(t2 - t1):1,' s');
-{  writeln(outfile,
-    ((t2 - t1 + 500) div 1000):1,
-    ' s')}
+  writeln(outfile, (t2 - t1) / 1000.0:0:3, ' s');
 end;
 
 procedure runtime(
   var codefile : binary;
   var inpfile: text;
   var outfile: text);
-var t1, t2 : int64;
+var t1, t2 : QWord;
 begin
   //writeln('enter runtime');
   readtime(t1);
